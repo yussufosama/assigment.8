@@ -1,0 +1,28 @@
+import express, { json } from "express";
+import { env } from "./config/env.service.js";
+import { connectdb } from "./database/connection.js";
+import { userModel } from "./database/model/user.model.js";
+import userRouter from './module/user/user.controller.js'
+import noteRouter from "./database/model/note.model.js"
+
+const app = express();
+app.use(json())
+ connectdb();
+
+ app.use('/users', userRouter)
+
+app.get('/health-check', async(req, res) => {
+  let users =  await userModel.find()
+
+  res.json({message: 'done', users})
+})
+
+app.use('/notes', noteRouter)
+
+
+
+
+
+app.listen(env.port, () => {
+  console.log(`server is running on ${env.port}`);
+});
